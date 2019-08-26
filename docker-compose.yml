@@ -1,0 +1,50 @@
+version: '2'
+
+volumes:
+
+  meetup-postgres-data:
+    driver: local
+
+  meetup-mysql-data:
+    driver: local
+
+  meetup-redis-data:
+    driver: local
+
+services:
+  # Postgres (10.3)
+  postgres:
+    image: postgres:10.3
+    container_name: meetup-postgres
+    volumes:
+    - meetup-postgres-data:/var/lib/postgresql/data
+    ports:
+    - "5432:5432"
+    environment:
+    - POSTGRES_PASSWORD=meetup
+    - POSTGRES_DB=meetup
+    - POSTGRES_USER=meetup
+
+  # MYSQL (5.7)
+  mysql:
+    image: mysql:5.7
+    container_name: meetup-mysql
+    volumes:
+      - meetup-mysql-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_DATABASE=meetup
+      - MYSQL_USER=meetup
+      - MYSQL_PASSWORD=secret
+
+  # REDIS (5.7)
+  cache:
+    image: redis:4.0
+    container_name: meetup-redis
+    command: --appendonly yes
+    volumes:
+      - meetup-redis-data:/data
+    ports:
+      - "6379:6379"
